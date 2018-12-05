@@ -223,23 +223,51 @@ end
 
 function whiteip()
     if next(ipWhitelist) ~= nil then
+	ClientIp = getClientIp()
         for _,ip in pairs(ipWhitelist) do
-            if getClientIp()==ip then
+            if ClientIp==ip then
                 return true
             end
+	    if  ClientIp~=ip and string.match(ip,"/") then
+		ipRangeCheck(ClientIp,ip)
+	    end	
         end
     end
-        return false
+       return false
 end
 
 function blockip()
      if next(ipBlocklist) ~= nil then
+	ClientIp = getClientIp()
          for _,ip in pairs(ipBlocklist) do
-             if getClientIp()==ip then
+             if ClientIp==ip then
                  ngx.exit(403)
                  return true
              end
+	     if  ClientIp~=ip and string.match(ip,"/") then
+		if ipRangeCheck(ClientIp,ip)==true then
+		  ngx.exit(403)
+		end
+	    end	
          end
      end
          return false
+end
+function ipRangeCheck(ip ,range_mask)
+    local ip_r1, ip_r2, ip_r3, ip_r4      = ip:match("(%d+)%.(%d+)%.(%d+)%.(%d+)")
+    local ip_s1,ip_s2,ip_s3,ip_s4,ip_mask = range_mask:match("(%d+)%.(%d+)%.(%d+)%.(%d+)%/(%d+)")
+ 
+    -- 以乘积的形式得出ip值和IP段的最小值
+    local ipValueNum = ip_r1*2^24 + ip_r2*2^16 +ip_r3*2^8 +ip_r4
+    local ipRangeMin = ip_s1*2^24 + ip_s2*2^16 +ip_s3*2^8 +ip_s4
+ 
+    -- IP段的最小值加上主机数的可能性即为ip段的最大值
+    local temp = 32 - ip_mask
+    local ipRangeMax = ipRangeMin + 2^temp
+ 
+    if (ipRangeMin < ipValueNum and ipValueNum < ipRangeMax) then
+        return true
+    else
+        return false
+    end
 end
