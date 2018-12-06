@@ -229,7 +229,9 @@ function whiteip()
                 return true
             end
 	    if  ClientIp~=ip and string.match(ip,"/") then
-		ipRangeCheck(ClientIp,ip)
+		if (ipRangeCheck(ClientIp,ip)==ture) then
+		    return true
+		end
 	    end	
         end
     end
