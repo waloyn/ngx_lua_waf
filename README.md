@@ -71,9 +71,9 @@ nginx安装路径假设为:/usr/local/nginx/conf/
         --ip黑名单，多个ip用逗号分隔
         CCDeny="on"
         --是否开启拦截cc攻击(需要nginx.conf的http段增加lua_shared_dict limit 10m;)
-        CCrate = "100/60"
-        --设置cc攻击频率，单位为秒.
-        --默认1分钟同一个IP只能请求同一个地址100次
+        CCrate = "100/60/1800"
+        --设置cc攻击频率及封锁时间，单位为秒.
+        --默认1分钟同一个IP只能请求同一个地址100次，超过即封禁半小时。
         html=[[Please go away~~]]
         --警告内容,可在中括号内自定义
         备注:不要乱动双引号，区分大小写
