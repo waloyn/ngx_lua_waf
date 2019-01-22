@@ -184,20 +184,24 @@ end
 function denycc()
     if CCDeny then
         local uri=ngx.var.uri
-        CCcount=tonumber(string.match(CCrate,'(.*)/'))
-        CCseconds=tonumber(string.match(CCrate,'/(.*)'))
+	local CCcount,CCseconds,Denytime=string.match(CCrate,'(.*)/(.*)/(.*)')
         local token = getClientIp()..uri
         local limit = ngx.shared.limit
         local req,_=limit:get(token)
+	local denyip,_=limit:get(clientip)
+	if denyip then
+	   ngx.exit(503)
+	end
         if req then
-            if req > CCcount then
+            if req > tonumber(CCcount) then
+		 limit:set(clientip,1,tonumber(Denytime))		
                  ngx.exit(503)
                 return true
             else
                  limit:incr(token,1)
             end
         else
-            limit:set(token,1,CCseconds)
+            limit:set(token,1,tonumber(CCseconds))
         end
     end
     return false
