@@ -37,10 +37,10 @@ export LUAJIT_INC=/usr/local/lj2/include/luajit-2.0/
 make -j8
 make install 
 #rm -rf /data/src
-cd /usr/local/nginx/conf/
-wget https://github.com/loveshell/ngx_lua_waf/archive/master.zip --no-check-certificate
+cd /usr/local/openresty/nginx/conf/
+wget https://github.com/waloyn/ngx_lua_waf/archive/master.zip --no-check-certificate
 unzip master.zip
-mv ngx_lua_waf-master/* /usr/local/nginx/conf/
+mv ngx_lua_waf-master/* /usr/local/oepnresty/nginx/conf/
 rm -rf ngx_lua_waf-master
 rm -rf /data/src
 mkdir -p /data/logs/hack
